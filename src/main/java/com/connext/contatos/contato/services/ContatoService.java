@@ -20,12 +20,11 @@ public class ContatoService {
         return repository.findAll();
     }   
     public Contato save(Contato contato){
-        validarDuplicidade(contato);
         return repository.save(contato);
     }
     public void update(Contato contato, long id){
         Contato aux = repository.getReferenceById(id);
-        validarDuplicidade(contato);
+        
         aux.setNome(contato.getNome());
         aux.setApelido(contato.getApelido());
         aux.setTelefone(contato.getTelefone());
@@ -40,19 +39,7 @@ public class ContatoService {
         repository.save(aux);
     }
 
-     private void validarDuplicidade(Contato contato) {
-
-        Optional<Contato> contatoPorEmail = repository.findByEmail(contato.getEmail());
-        if (contatoPorEmail.isPresent() && !contatoPorEmail.get().getId().equals(contato.getId())) {
-            throw new RuntimeException("Este email já está cadastrado em outro contato.");
-        }
-
-        // Validação de duplicidade de Telefone
-        Optional<Contato> contatoPorTelefone = repository.findByTelefone(contato.getTelefone());
-        if (contatoPorTelefone.isPresent() && !contatoPorTelefone.get().getId().equals(contato.getId())) {
-            throw new RuntimeException("Este telefone já está cadastrado em outro contato.");
-        }
-    }
+    
     public void delete(long id){
         if(repository.existsById(id)){
             repository.deleteById(id);
